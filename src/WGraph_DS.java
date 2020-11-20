@@ -186,9 +186,13 @@ public class WGraph_DS implements weighted_graph, Serializable {
     @Override
     //returns true iff (if and only if) there is an edge between node1 and node2
     public boolean hasEdge(int node1, int node2) {
-        //  O(1) since containsKey() method for Hashmaps used by hasNi has a O(1) complexity
+
         NodeInfo node = (NodeInfo) this.nodeMap.get(node1);
-        return node.hasNi(node2);
+        if(node != null) {
+            //  O(1) since containsKey() method for Hashmaps used by hasNi has a O(1) complexity
+            return node.hasNi(node2);
+        }
+        else return false;
     }
 
     @Override
@@ -218,18 +222,16 @@ public class WGraph_DS implements weighted_graph, Serializable {
     // Connect an edge between node1 and node2
     public void connect(int node1, int node2, double w) {
 
-        //Updating neighbours Hashmap:
+        if(node1 != node2) {//this is to avoid adding a connection between a node and itself
 
-        if(!hasEdge(node1,node2)) num_of_edge++; // only increments num_of_edge if there isn't an edge already
+            //Updating neighbours Hashmap:
+            if (!hasEdge(node1, node2)) num_of_edge++; // only increments num_of_edge if there isn't an edge already
 
-        if (nodeMap.containsKey(node1)                  //if node1 exists in nodeMap
-                && (nodeMap.containsKey(node2))        //if node2 exists in nodeMap
-                && (node1 != node2)) {                 //this is to avoid adding a connection between a node and itself
+            if (nodeMap.containsKey(node1)                  //if node1 exists in nodeMap
+                    && (nodeMap.containsKey(node2))){        //if node2 exists in nodeMap)
 
-                if(hasEdge(node1,node2)                                     //if there is already an edge
-                        && (getEdge(node1,node2) != w)){                    // and its weight isn't the same as w
-                    MC++;
-                }
+
+                if(hasEdge(node1,node2) && getEdge(node1, node2) == w) return; //don't update if not needed
 
                 //add edge between each other
                 this.edgeMap.get(node1).put(node2, w); //O(1)
@@ -240,47 +242,11 @@ public class WGraph_DS implements weighted_graph, Serializable {
                 node_1.addNi(this.nodeMap.get(node2)); //O(1)
                 NodeInfo node_2 = (NodeInfo) this.nodeMap.get(node2);
                 node_2.addNi(this.nodeMap.get(node1)); //O(1)
+
+                MC++;
+            }
         }
     }
-//@Override
-//// We can suppose valid weight (positive)
-//// Connect an edge between node1 and node2
-//public void connect(int node1, int node2, double w) {
-//
-//    //Updating neighbours Hashmap:
-//
-//    if (nodeMap.containsKey(node1)                  //if node1 exists in nodeMap
-//            && (nodeMap.containsKey(node2))        //if node2 exists in nodeMap
-//            && (node1 != node2)
-//            && !hasEdge(node1,node2)) {                 //this is to avoid adding a connection between a node and itself
-//
-//        //add edge between each other
-//        this.edgeMap.get(node1).put(node2, w); //O(1)
-//        this.edgeMap.get(node2).put(node1, w); //O(1)
-//
-//        //add each of them in each other's neighbour's list
-//        NodeInfo node_1 = (NodeInfo) this.nodeMap.get(node1);
-//        node_1.addNi(this.nodeMap.get(node2)); //O(1)
-//        NodeInfo node_2 = (NodeInfo) this.nodeMap.get(node2);
-//        node_2.addNi(this.nodeMap.get(node1)); //O(1)
-//
-//        this.MC++;
-//        this.num_of_edge++;
-//    }
-//    else{
-//        this.edgeMap.get(node1).put(node2, w); //O(1)
-//        this.edgeMap.get(node2).put(node1, w); //O(1)
-//
-//        //add each of them in each other's neighbour's list
-//        NodeInfo node_1 = (NodeInfo) this.nodeMap.get(node1);
-//        node_1.addNi(this.nodeMap.get(node2)); //O(1)
-//        NodeInfo node_2 = (NodeInfo) this.nodeMap.get(node2);
-//        node_2.addNi(this.nodeMap.get(node1)); //O(1)
-//
-//        this.MC++;
-//    }
-//}
-
 
     @Override
     public Collection<node_info> getV() {
